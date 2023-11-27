@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
+import path, { join } from "path";
 
 dotenv.config();
 
@@ -16,14 +17,22 @@ mongoose
     console.log(err);
   });
 
+const __dirname = path.resolve();
+
 const app = express();
+
+app.use(express.static(path.join(__dirname, "/client/dist")));
+
+app.get("*", (res, req) => {
+  res.sentFile(path, join(__dirname, "client", "dist", "index.html"));
+});
 
 app.use(express.json());
 
 app.use(cookieParser());
 
 app.listen(3000, () => {
-  console.log("Server listening on port 3000!");
+  console.log("Server listening on port 3000");
 });
 
 app.use("/api/user", userRoutes);
